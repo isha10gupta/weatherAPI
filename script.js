@@ -1,72 +1,39 @@
-// The API key for OpenWeatherMap. Make sure to replace this with your actual API key
-const apiKey = 'YOUR_OPENWEATHERMAP_API_KEY'; // Replace with your OpenWeatherMap API Key
-
-// Get the HTML elements
-const cityName = document.getElementById("cityName");
-const temp = document.getElementById("temp");
-const feels_like = document.getElementById("feels_like");
-const humidity = document.getElementById("humidity");
-const min_temp = document.getElementById("min_temp");
-const max_temp = document.getElementById("max_temp");
-const wind_speed = document.getElementById("wind_speed");
-const wind_degrees = document.getElementById("wind_degrees");
-const sunrise = document.getElementById("sunrise");
-const sunset = document.getElementById("sunset");
-const cityInput = document.getElementById("city");
-const submit = document.getElementById("submit");
-
-// Function to convert the Unix timestamp to a human-readable time
-const convertTime = (timestamp) => {
-  const date = new Date(timestamp * 1000);
-  return date.toLocaleTimeString();
+const options = {
+	method: 'GET',
+	headers: {
+		'X-RapidAPI-Key': '2bd48b02f4msh80ba12314c06778p1bc9b8jsnfa9a0461a061',
+		'X-RapidAPI-Host': 'weather-by-api-ninjas.p.rapidapi.com'
+	}
 };
+const getWeather =(city)=>{
+	cityName.innerHTML=city
 
-// Function to fetch the weather data
-const getWeather = (city) => {
-  cityName.textContent = city; // Use textContent instead of innerHTML for security
+fetch('https://weather-by-api-ninjas.p.rapidapi.com/v1/weather?city=' + city, options)
+	.then(response => response.json())
+	.then((response) => 
+		{
+			console.log(response)
 
-  // API URL with the city and API key
-  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
+temp.innerHTML = response.temp
 
-  fetch(apiUrl)
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error(`City not found or API error: ${response.statusText}`);
-      }
-      return response.json();
-    })
-    .then((data) => {
-      console.log(data);
+feels_like.innerHTML =response.feels_like
+humidity.innerHTML =response.humidity
 
-      // Update the UI with weather data
-      temp.textContent = `${data.main.temp} °C`;
-      feels_like.textContent = `${data.main.feels_like} °C`;
-      humidity.textContent = `${data.main.humidity} %`;
-      min_temp.textContent = `${data.main.temp_min} °C`;
-      max_temp.textContent = `${data.main.temp_max} °C`;
-      wind_speed.textContent = `${data.wind.speed} m/s`;
-      wind_degrees.textContent = `${data.wind.deg}°`;
-      
-      // Convert and display the sunrise and sunset times
-      sunrise.textContent = convertTime(data.sys.sunrise);
-      sunset.textContent = convertTime(data.sys.sunset);
-    })
-    .catch((err) => {
-      console.error(err);
-      alert('City not found or API error. Please try again.');
-    });
-};
+min_temp.innerHTML =response.min_temp
+max_temp.innerHTML =response.max_temp
+wind_speed.innerHTML = response.wind_speed
 
-// Event listener for the submit button
-submit.addEventListener("click", (e) => {
-  e.preventDefault();
-  const city = cityInput.value.trim();
-  if (city) {
-    getWeather(city);
-  } else {
-    alert('Please enter a city name.');
-  }
-});
+wind_degrees.innerHTML =response.wind_degrees
+sunrise.innerHTML =response.sunrise
+sunset.innerHTML=response.sunset
 
-// Default weather data for a city (for example, "Delhi")
-getWeather("Delhi");
+
+ })
+	.catch(err => console.error(err));
+}
+submit.addEventListener("click",(e)=>{
+	e.preventDefault()
+	getWeather(city.value)
+
+})
+getWeather("Delhi")
