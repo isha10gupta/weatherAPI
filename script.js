@@ -12,9 +12,9 @@ const getWeather = (city) => {
   fetch('https://weather-by-api-ninjas.p.rapidapi.com/v1/weather?city=' + city, options)
     .then(response => response.json())
     .then((response) => {
-      console.log(response);
+      console.log(response); // Log the response to verify structure
 
-      // Safely update the UI with response properties
+      // Update the UI dynamically, showing "N/A" if a property is missing
       temp.innerHTML = response.temp ?? 'N/A';
       feels_like.innerHTML = response.feels_like ?? 'N/A';
       humidity.innerHTML = response.humidity ?? 'N/A';
@@ -24,6 +24,11 @@ const getWeather = (city) => {
       wind_degrees.innerHTML = response.wind_degrees ?? 'N/A';
       sunrise.innerHTML = response.sunrise ? new Date(response.sunrise * 1000).toLocaleTimeString() : 'N/A';
       sunset.innerHTML = response.sunset ? new Date(response.sunset * 1000).toLocaleTimeString() : 'N/A';
+
+      // Log undefined properties
+      if (response.temp === undefined) console.warn("temp is undefined");
+      if (response.humidity === undefined) console.warn("humidity is undefined");
+      if (response.wind_speed === undefined) console.warn("wind_speed is undefined");
     })
     .catch(err => {
       console.error(err);
