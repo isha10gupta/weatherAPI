@@ -19,38 +19,43 @@ const submit = document.getElementById("submit");
 const convertTime = (timestamp) => {
   const date = new Date(timestamp * 1000);
   return date.toLocaleTimeString();
-}
+};
 
 // Function to fetch the weather data
 const getWeather = (city) => {
-  cityName.innerHTML = city;
+  cityName.textContent = city; // Use textContent instead of innerHTML for security
 
   // API URL with the city and API key
-  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+  const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${apiKey}&units=metric`;
 
   fetch(apiUrl)
-    .then(response => response.json())
-    .then(data => {
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error(`City not found or API error: ${response.statusText}`);
+      }
+      return response.json();
+    })
+    .then((data) => {
       console.log(data);
 
       // Update the UI with weather data
-      temp.innerHTML = data.main.temp;
-      feels_like.innerHTML = data.main.feels_like;
-      humidity.innerHTML = data.main.humidity;
-      min_temp.innerHTML = data.main.temp_min;
-      max_temp.innerHTML = data.main.temp_max;
-      wind_speed.innerHTML = data.wind.speed;
-      wind_degrees.innerHTML = data.wind.deg;
+      temp.textContent = `${data.main.temp} °C`;
+      feels_like.textContent = `${data.main.feels_like} °C`;
+      humidity.textContent = `${data.main.humidity} %`;
+      min_temp.textContent = `${data.main.temp_min} °C`;
+      max_temp.textContent = `${data.main.temp_max} °C`;
+      wind_speed.textContent = `${data.wind.speed} m/s`;
+      wind_degrees.textContent = `${data.wind.deg}°`;
       
       // Convert and display the sunrise and sunset times
-      sunrise.innerHTML = convertTime(data.sys.sunrise);
-      sunset.innerHTML = convertTime(data.sys.sunset);
+      sunrise.textContent = convertTime(data.sys.sunrise);
+      sunset.textContent = convertTime(data.sys.sunset);
     })
-    .catch(err => {
+    .catch((err) => {
       console.error(err);
       alert('City not found or API error. Please try again.');
     });
-}
+};
 
 // Event listener for the submit button
 submit.addEventListener("click", (e) => {
